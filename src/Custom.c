@@ -15,11 +15,8 @@ SDL_Window *window = NULL;
 SDL_Renderer *renderer = NULL;
 SDL_Rect board;
 SDL_Rect square;
-
-int DrawGrid(int rows, int columns, SDL_Window *window, SDL_Renderer *renderer) {
-    rows = rows * 2 + 1;
-    columns = columns * 2 + 1;
-
+int rows, columns;
+int DrawGrid(SDL_Window *window, SDL_Renderer *renderer) {
     board.w = MIN(SCREEN_WIDTH, SCREEN_HEIGHT);
     board.h = MIN(SCREEN_WIDTH, SCREEN_HEIGHT);
 
@@ -102,14 +99,19 @@ int init() {
             SDL_GetError());
         return 1;
     }
-
+    printf("Number of Rows : ");
+    scanf("%d", &rows);
+    printf("Number of Columns : ");
+    scanf("%d", &columns);
+    rows = rows * 2 + 1;
+    columns = columns * 2 + 1;
     return 0;
 }
 
 void render() {
     SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
     SDL_RenderClear(renderer);
-    DrawGrid(11, 11, window, renderer);
+    DrawGrid(window, renderer);
     SDL_RenderPresent(renderer);
 }
 
