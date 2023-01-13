@@ -107,12 +107,12 @@ int init() {
             SDL_GetError());
         return 1;
     }
-    // printf("Number of Rows : ");
-    // scanf("%d", &rows);
-    // printf("Number of Columns : ");
-    // scanf("%d", &columns);
-    rows = 10;
-    columns = 10;
+    printf("Number of Rows : ");
+    scanf("%d", &rows);
+    printf("Number of Columns : ");
+    scanf("%d", &columns);
+    // rows = 10;
+    // columns = 10;
     rows = rows * 2 + 1;
     columns = columns * 2 + 1;
     return 0;
