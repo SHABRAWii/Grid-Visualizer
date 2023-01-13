@@ -13,10 +13,12 @@ int SCREEN_HEIGHT = 600;
 
 SDL_Window *window = NULL;
 SDL_Renderer *renderer = NULL;
+SDL_Rect board;
+SDL_Rect square;
+int rows, columns;
 
 int DrawGrid(int rows, int columns, SDL_Window *window, SDL_Renderer *renderer) {
     // Declare rect of square
-    SDL_Rect board;
 
     board.w = MIN(SCREEN_WIDTH, SCREEN_HEIGHT);
     board.h = MIN(SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -24,7 +26,6 @@ int DrawGrid(int rows, int columns, SDL_Window *window, SDL_Renderer *renderer) 
     board.x = (SCREEN_WIDTH - board.w) / 2;
     board.y = (SCREEN_HEIGHT - board.h) / 2;
 
-    SDL_Rect square;
     square.w = board.w / columns;
     square.h = board.h / rows;
 
@@ -129,17 +130,32 @@ void apply(const char *Path) {
     while(fgets(Command, 21, Commands)) {
         // printf("%s", Command);
         int cnt = 0, X, Y, R, G, B;
+        Mark(X, Y);
         if(Command[0] == 'S') {
             sscanf(Command, "SP %d %d #%02x%02x%02x", &X, &Y, &R, &G, &B);
             // printf("Setting Pixel at X(%d) Y(%d) to R(%d) G(%d) B(%d)", X, Y, R, G, B);
             // Set pixel
             // TODO
+            SDL_SetRenderDrawColor(renderer, R, G, B, 0xFF);
+            SDL_RenderFillRect(renderer, &square);
         } else if(Command[0] == 'C') {
             sscanf(Command, "CL %d %d", &X, &Y, &R, &G, &B);
             // printf("Clearing Pixel at X(%d) Y(%d)", X, Y);
             // Draw line
             // TODO
+            if ((X + Y) % 2) {
+                SDL_SetRenderDrawColor(renderer, 180, 180, 180, 0xFF);
+                // Draw filled square
+            } else {
+                SDL_SetRenderDrawColor(renderer, 200, 200, 200, 0xFF);
+            }
+            SDL_RenderFillRect(renderer, &square);
         }
     }
+    return;
+}
+void Mark(int X, int Y){
+    square.x = (X + rows / 2) * square.w + board.x;
+    square.y = (Y + columns / 2) * square.h + board.y;
     return;
 }
