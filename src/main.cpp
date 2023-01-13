@@ -8,6 +8,7 @@ using namespace std;
 
 int main(int argc, char* argv[]) {
     Draw();
-
+    cout << "Bye" << endl;
+     
     return 0;
 }
