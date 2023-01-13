@@ -3,8 +3,12 @@ extern "C" {
 #endif
 
 #include <SDL2/SDL.h>
-SDL_Window* init();
-void render(SDL_Window*);
+
+int init();
+void render();
+void clearWindow();
+void resizeWindow(int, int);
+
 #ifdef __cplusplus
 }
 #endif
