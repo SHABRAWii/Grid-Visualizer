@@ -53,22 +53,22 @@ int DrawGrid() {
 
     int axisThickness = (8 * square.w + 99) / 100;
 
-    for (int i = board.y; i < board.y + rows * square.w; i++) {
+    for (int i = board.y; i < board.y + board.h; i++) {
         SDL_Rect pixel;
         pixel.w = axisThickness;
         pixel.h = 1;
-        pixel.x = (board.x + board.x + columns * square.w) / 2 - axisThickness / 2 + (rows % 2 ? 0 : square.w / 2) + horizontalPadding;
+        pixel.x = (board.x + board.x + board.w) / 2 - axisThickness / 2 + (rows % 2 ? 0 : square.w / 2) + horizontalPadding;
         pixel.y = i + verticalPadding;
 
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderFillRect(renderer, &pixel);
     }
 
-    for (int i = board.x; i < board.x + columns * square.h; i++) {
+    for (int i = board.x; i < board.x + board.w; i++) {
         SDL_Rect pixel;
         pixel.h = axisThickness;
         pixel.w = 1;
-        pixel.y = (board.y + board.y + rows * square.w) / 2 - axisThickness / 2 + (columns % 2 ? 0 : square.w / 2) + verticalPadding;
+        pixel.y = (board.y + board.y + board.h) / 2 - axisThickness / 2 + (columns % 2 ? 0 : square.w / 2) + verticalPadding;
         pixel.x = i + horizontalPadding;
 
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
