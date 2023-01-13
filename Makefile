@@ -3,6 +3,8 @@ TARGET := Grid-Visualizer.exe
 dumpmachine =$(shell g++ -dumpmachine | grep 64)
 IS := $(shell [ -z $(dumpmachine)  ] && { echo "mingw32"; } || { echo "x86_64-w64-mingw32"; } )
 
+Command_File := src/Commands.txt
+
 SRC_DIR := src
 INC_DIR := include
 OBJ_DIR := obj
@@ -24,7 +26,7 @@ DEP_FLAG =  -MMD -MF $(DEP_DIR)/$*.d
 
 all: build
 
-build: $(DEP_DIR) $(OBJ_DIR) $(BIN_DIR) $(OBJ) $(EXE) $(DEP)
+build: $(DEP_DIR) $(OBJ_DIR) $(BIN_DIR) $(OBJ) $(EXE) $(DEP) $(Command_File)
 
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
@@ -41,6 +43,9 @@ $(BIN_DIR):
 	mkdir -p $(BIN_DIR)
 $(DEP_DIR):
 	mkdir -p $(DEP_DIR)
+
+$(Command_File)
+	touch $(Command_File)
 
 run: build $(EXE)
 	$(EXE)

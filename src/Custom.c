@@ -2,6 +2,7 @@
 
 
 #include <stdio.h>
+#include <string.h>
 
 // Define MAX and MIN macros
 #define MAX(X, Y) (((X) > (Y)) ? (X) : (Y))
@@ -11,13 +12,14 @@
 int SCREEN_WIDTH = 800;
 int SCREEN_HEIGHT = 600;
 
+int CELL[1000][1000];
 SDL_Window *window = NULL;
 SDL_Renderer *renderer = NULL;
 SDL_Rect board;
 SDL_Rect square;
 int rows, columns;
 
-int DrawGrid(int rows, int columns, SDL_Window *window, SDL_Renderer *renderer) {
+int DrawGrid() {
     // Declare rect of square
     SDL_Rect board;
 
@@ -34,19 +36,25 @@ int DrawGrid(int rows, int columns, SDL_Window *window, SDL_Renderer *renderer) 
         for (int j = 0; j < columns; j++) {
             square.x = j * square.w + board.x;
             square.y = i * square.h + board.y;
+            if(!~CELL[j][i]){
+                if ((i + j) % 2) {
+                    SDL_SetRenderDrawColor(renderer, 180, 180, 180, 0xFF);
 
-            if ((i + j) % 2) {
-                SDL_SetRenderDrawColor(renderer, 180, 180, 180, 0xFF);
-
-            } else {
-                SDL_SetRenderDrawColor(renderer, 200, 200, 200, 0xFF);
+                } else {
+                    SDL_SetRenderDrawColor(renderer, 200, 200, 200, 0xFF);
+                }
+            }else{
+                int R = (CELL[j][i] >> 16) & 0xFF;
+                int G = (CELL[j][i] >> 8) & 0xFF;
+                int B = (CELL[j][i])      & 0xFF;
+                SDL_SetRenderDrawColor(renderer, R, G, B, 0xFF);
             }
             SDL_RenderFillRect(renderer, &square);
         }
     }
 
     int axisThickness = (8 * square.w + 99) / 100;
-    printf("%d\n", board.y + board.h);
+    // printf("%d\n", board.y + board.h);
     int mxi = -1;
     for (int i = board.y; i < board.y + board.h; i++) {
         SDL_Rect pixel;
@@ -59,7 +67,7 @@ int DrawGrid(int rows, int columns, SDL_Window *window, SDL_Renderer *renderer) 
         SDL_RenderFillRect(renderer, &pixel);
     }
 
-    printf("%d\n", mxi);
+    // printf("%d\n", mxi);
     for (int i = board.x; i < board.x + board.w; i++) {
         SDL_Rect pixel;
         pixel.h = axisThickness;
@@ -73,6 +81,7 @@ int DrawGrid(int rows, int columns, SDL_Window *window, SDL_Renderer *renderer) 
 }
 
 int init() {
+    memset(CELL, -1, sizeof(CELL));
     // Initialize SDL
     if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
         printf(
@@ -104,18 +113,25 @@ int init() {
         return 1;
     }
     printf("Number of Rows : ");
-    scanf("%d", &rows);
+    // scanf("%d", &rows);
     printf("Number of Columns : ");
-    scanf("%d", &columns);
+    // scanf("%d", &columns);
+    rows = columns = 5;
     rows = rows * 2 + 1;
     columns = columns * 2 + 1;
     return 0;
 }
 
-void render() {
+void render(const char *Path) {
     SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
     SDL_RenderClear(renderer);
-    DrawGrid(window, renderer);
+    DrawGrid();
+    if(is_Modified(Path)){
+        printf("Modified\n");
+        printf("____________\n");
+        apply(Path);
+        printf("\n____________");
+    }
     SDL_RenderPresent(renderer);
 }
 
@@ -138,33 +154,23 @@ void apply(const char *Path) {
     char Command[21]; // SP 0000 0000 #000000
     while(fgets(Command, 21, Commands)) {
         // printf("%s", Command);
-        int cnt = 0, X, Y, R, G, B;
-        Mark(X, Y);
+        int cnt = 0, X = -INT32_MIN, Y = -INT32_MIN, color_HEX = -2;
         if(Command[0] == 'S') {
-            sscanf(Command, "SP %d %d #%02x%02x%02x", &X, &Y, &R, &G, &B);
-            // printf("Setting Pixel at X(%d) Y(%d) to R(%d) G(%d) B(%d)", X, Y, R, G, B);
-            // Set pixel
-            // TODO
-            SDL_SetRenderDrawColor(renderer, R, G, B, 0xFF);
-            SDL_RenderFillRect(renderer, &square);
+            sscanf(Command, "SP %d %d #%d", &X, &Y, &color_HEX);
+            printf("Setting Pixel at X(%d) Y(%d) to R(-) G(-) B(-)", X, Y);
         } else if(Command[0] == 'C') {
-            sscanf(Command, "CL %d %d", &X, &Y, &R, &G, &B);
-            // printf("Clearing Pixel at X(%d) Y(%d)", X, Y);
-            // Draw line
-            // TODO
-            if ((X + Y) % 2) {
-                SDL_SetRenderDrawColor(renderer, 180, 180, 180, 0xFF);
-                // Draw filled square
-            } else {
-                SDL_SetRenderDrawColor(renderer, 200, 200, 200, 0xFF);
+            if(Command[2] == 'A'){
+                memset(CELL, -1, sizeof(CELL)); // Clear All cells
+                continue;
+            }else{
+                sscanf(Command, "CL %d %d", &X, &Y);
+                color_HEX = -1; // This is tag of Cleared Cell
             }
-            SDL_RenderFillRect(renderer, &square);
         }
+        if(X == -INT32_MIN || Y == -INT32_MIN || color_HEX == -2){ // Invalid Command
+            break;
+        }
+        CELL[(X + rows / 2)][ - Y + columns / 2] = color_HEX; // Apply formatting to the cell at X, Y
     }
-    return;
-}
-void Mark(int X, int Y){
-    square.x = (X + rows / 2) * square.w + board.x;
-    square.y = (Y + columns / 2) * square.h + board.y;
     return;
 }
