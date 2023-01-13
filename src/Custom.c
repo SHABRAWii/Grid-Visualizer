@@ -1,6 +1,6 @@
 #include "Custom.h"
 
-#include <stdbool.h>
+
 #include <stdio.h>
 
 // Define MAX and MIN macros
@@ -90,4 +90,29 @@ void render(SDL_Window *window) {
     }
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
+}
+bool is_Modified(const char *Path) {
+    static time_t last_modified = 0;
+    struct stat file_stat;
+    return (!stat(Path, &file_stat)) && (file_stat.st_mtime > last_modified) && (last_modified = file_stat.st_mtime);
+}
+void apply(const char *Path, SDL_Window *window) {
+    FILE *Commands = fopen(Path,"r");
+    char Command[21]; // SP 0000 0000 #000000
+    while(fgets(Command, 21, Commands)) {
+        // printf("%s", Command);
+        int cnt = 0, X, Y, R, G, B;
+        if(Command[0] == 'S') {
+            sscanf(Command, "SP %d %d #%02x%02x%02x", &X, &Y, &R, &G, &B);
+            // printf("Setting Pixel at X(%d) Y(%d) to R(%d) G(%d) B(%d)", X, Y, R, G, B);
+            // Set pixel
+            // TODO
+        } else if(Command[0] == 'C') {
+            sscanf(Command, "CL %d %d", &X, &Y, &R, &G, &B);
+            // printf("Clearing Pixel at X(%d) Y(%d)", X, Y);
+            // Draw line
+            // TODO
+        }
+    }
+    return;
 }
