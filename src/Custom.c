@@ -18,11 +18,7 @@ SDL_Renderer *renderer = NULL;
 SDL_Rect board;
 SDL_Rect square;
 int rows, columns;
-
 int DrawGrid() {
-    // Declare rect of square
-    SDL_Rect board;
-
     board.w = MIN(SCREEN_WIDTH, SCREEN_HEIGHT);
     board.h = MIN(SCREEN_WIDTH, SCREEN_HEIGHT);
 
@@ -32,10 +28,22 @@ int DrawGrid() {
     square.w = board.w / columns;
     square.h = board.h / rows;
 
+    board.w = columns * square.w;
+    board.h = rows * square.h;
+
+    int verticalPadding = 0;
+    int horizontalPadding = 0;
+    if (SCREEN_HEIGHT > SCREEN_WIDTH) {
+        horizontalPadding = (SCREEN_WIDTH - board.w) / 2;
+    } else {
+        verticalPadding = (SCREEN_HEIGHT - board.h) / 2;
+    }
+
     for (int i = 0; i < rows; i++) {
         for (int j = 0; j < columns; j++) {
-            square.x = j * square.w + board.x;
-            square.y = i * square.h + board.y;
+            square.x = j * square.w + board.x + horizontalPadding;
+            square.y = i * square.h + board.y + verticalPadding;
+
             if(!~CELL[j][i]){
                 if ((i + j) % 2) {
                     SDL_SetRenderDrawColor(renderer, 180, 180, 180, 0xFF);
@@ -54,26 +62,24 @@ int DrawGrid() {
     }
 
     int axisThickness = (8 * square.w + 99) / 100;
-    // printf("%d\n", board.y + board.h);
-    int mxi = -1;
+
     for (int i = board.y; i < board.y + board.h; i++) {
         SDL_Rect pixel;
         pixel.w = axisThickness;
         pixel.h = 1;
-        pixel.x = (board.x + board.x + board.w) / 2 - axisThickness / 2 + (rows % 2 ? 0 : square.w / 2);
-        pixel.y = i;
-        mxi = MAX(i, mxi);
+        pixel.x = (board.x + board.x + board.w) / 2 - axisThickness / 2 + (rows % 2 ? 0 : square.w / 2) + horizontalPadding;
+        pixel.y = i + verticalPadding;
+
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderFillRect(renderer, &pixel);
     }
 
-    // printf("%d\n", mxi);
     for (int i = board.x; i < board.x + board.w; i++) {
         SDL_Rect pixel;
         pixel.h = axisThickness;
         pixel.w = 1;
-        pixel.y = (board.y + board.y + board.h) / 2 - axisThickness / 2 + (columns % 2 ? 0 : square.w / 2);
-        pixel.x = i;
+        pixel.y = (board.y + board.y + board.h) / 2 - axisThickness / 2 + (columns % 2 ? 0 : square.w / 2) + verticalPadding;
+        pixel.x = i + horizontalPadding;
 
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderFillRect(renderer, &pixel);
