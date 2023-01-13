@@ -1,4 +1,4 @@
-#include <SDL2/SDL.h>
+
 
 #include <iostream>
 
@@ -7,8 +7,8 @@
 using namespace std;
 
 int main(int argc, char* argv[]) {
-    Draw();
-    cout << "Bye" << endl;
-     
+    SDL_Window* window = init();
+    render(window);
+
     return 0;
 }
