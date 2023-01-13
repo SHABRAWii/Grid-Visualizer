@@ -36,7 +36,7 @@ int main(int argc, char* argv[]) {
         if(is_Modified(Path)){
             cout << "Modified\n";
             cout << "____________\n";
-            apply(Path, window);
+            apply(Path);
             cout << "\n____________";
         }
     }

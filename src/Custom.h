@@ -12,7 +12,7 @@ void render();
 void clearWindow();
 void resizeWindow(int, int);
 bool is_Modified(const char *Path);
-void apply(const char *Path, SDL_Window *window);
+void apply(const char *Path);
 
 #ifdef __cplusplus
 }

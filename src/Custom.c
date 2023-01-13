@@ -123,7 +123,7 @@ bool is_Modified(const char *Path) {
     struct stat file_stat;
     return (!stat(Path, &file_stat)) && (file_stat.st_mtime > last_modified) && (last_modified = file_stat.st_mtime);
 }
-void apply(const char *Path, SDL_Window *window) {
+void apply(const char *Path) {
     FILE *Commands = fopen(Path,"r");
     char Command[21]; // SP 0000 0000 #000000
     while(fgets(Command, 21, Commands)) {
