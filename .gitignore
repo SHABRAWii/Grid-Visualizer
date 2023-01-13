@@ -2,4 +2,6 @@ obj/
 bin/*.exe
 .vscode/
 dep/
+lib/
+bin/
 note.txt
