@@ -24,6 +24,7 @@ int main(int argc, char* argv[]) {
                 case SDL_WINDOWEVENT:
                     if (e.window.event == SDL_WINDOWEVENT_RESIZED) {
                         resizeWindow(e.window.data1, e.window.data2);
+                        render();
                     }
 
                 default:
