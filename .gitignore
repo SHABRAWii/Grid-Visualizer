@@ -1,7 +1,5 @@
 obj/
-bin/*.exe
+*.exe
 .vscode/
 dep/
-lib/
-bin/
 note.txt
