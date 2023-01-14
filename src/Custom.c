@@ -86,7 +86,7 @@ int DrawGrid() {
     }
 }
 
-int init() {
+int init(int max_X, int max_Y) {
     memset(CELL, -1, sizeof(CELL));
     // Initialize SDL
     if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
@@ -118,18 +118,16 @@ int init() {
             SDL_GetError());
         return 1;
     }
-    printf("Number of Rows : ");
-    // scanf("%d", &rows);
-    printf("Number of Columns : ");
-    // scanf("%d", &columns);
-    rows = columns = 5;
+
+    rows = max_X;
+    columns = max_Y;
     rows = rows * 2 + 1;
     columns = columns * 2 + 1;
     return 0;
 }
 
 void render(const char *Path) {
-    SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+    SDL_SetRenderDrawColor(renderer, 193, 204, 234, 0xFF);
     SDL_RenderClear(renderer);
     DrawGrid();
     if(is_Modified(Path)){
@@ -160,10 +158,10 @@ void apply(const char *Path) {
     char Command[21]; // SP 0000 0000 #000000
     while(fgets(Command, 21, Commands)) {
         // printf("%s", Command);
-        int cnt = 0, X = -INT32_MIN, Y = -INT32_MIN, color_HEX = -2;
+        int cnt = 0, X = INT32_MIN, Y = INT32_MIN, color_HEX = -2;
         if(Command[0] == 'S') {
-            sscanf(Command, "SP %d %d #%d", &X, &Y, &color_HEX);
-            printf("Setting Pixel at X(%d) Y(%d) to R(-) G(-) B(-)", X, Y);
+            sscanf(Command, "SP %d %d #%06x", &X, &Y, &color_HEX);
+            printf("Setting Pixel at X(%d) Y(%d) to Hex(%06x)", X, Y, color_HEX);
         } else if(Command[0] == 'C') {
             if(Command[2] == 'A'){
                 memset(CELL, -1, sizeof(CELL)); // Clear All cells
@@ -173,7 +171,7 @@ void apply(const char *Path) {
                 color_HEX = -1; // This is tag of Cleared Cell
             }
         }
-        if(X == -INT32_MIN || Y == -INT32_MIN || color_HEX == -2){ // Invalid Command
+        if(X == INT32_MIN || Y == INT32_MIN || color_HEX == -2){ // Invalid Command
             break;
         }
         CELL[(X + rows / 2)][ - Y + columns / 2] = color_HEX; // Apply formatting to the cell at X, Y

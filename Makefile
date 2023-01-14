@@ -44,7 +44,7 @@ $(BIN_DIR):
 $(DEP_DIR):
 	mkdir -p $(DEP_DIR)
 
-$(Command_File)
+$(Command_File):
 	touch $(Command_File)
 
 run: build $(EXE)

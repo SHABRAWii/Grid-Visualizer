@@ -7,7 +7,7 @@
 using namespace std;
 
 int main(int argc, char* argv[]) {
-    init();
+    init(10, 10);
 
     const char Path[] = "src/Commands.txt";
     bool quit = false;
